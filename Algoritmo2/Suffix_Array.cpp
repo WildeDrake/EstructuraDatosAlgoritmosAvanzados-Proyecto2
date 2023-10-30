@@ -36,35 +36,45 @@ vector<int> SuffixArray(string texto) {
     return suffixArray;
 }
 
-int contarPatron(string patron, string texto, vector<int> suffixArray) {
-
-    int n = texto.length();
-    int m = patron.length();
-
+int contarPatron(string &patron, string &texto, vector<int> &suffixArray) {
     int izq = 0;
-    int der = n-1;
-    int contRep = 0;
+    int der = texto.length() - 1;
+    int cont = 0;
 
     while (izq <= der) {
-        int med = izq + (der - izq) / 2;
-        string subcadena = texto.substr(suffixArray[med], m);
-        if (subcadena == patron) {
-            contRep++;
-        }
-        if (subcadena < patron) {
-            izq = med + 1;
-        } else {
-            der = med - 1;
+        int mid = izq + (der - izq) / 2;
+        string sufijo = texto.substr(suffixArray[mid], patron.length());
+
+        if (sufijo == patron) { // Coincidencia lexicografica.
+            cont++;
+            // Buscar ocurrencias al lado izquierdo.
+            int i = mid - 1;
+            while (i >= izq && texto.substr(suffixArray[i], patron.length()) == patron) {
+                cont++;
+                i--;
+            }
+            // Buscar ocurrencias al lado derecho.
+            i = mid + 1;
+            while (i <= der && texto.substr(suffixArray[i], patron.length()) == patron) {
+                cont++;
+                i++;
+            }
+            break;
+
+        } else if (sufijo < patron) { // Patron menor lexicograficamente.
+            izq = mid + 1;
+            
+        } else { // Patron mayor lexicograficamente.
+            der = mid - 1;
         }
     }
-
-    return contRep;
+    
+    return cont;
 }
-
 
 int main() {
     string texto = "banana";
-    string patron = "an";
+    string patron = "ana";
     vector<int> suffixArray = SuffixArray(texto);
 
     cout << "SuffixArray para '" << texto << "':" << endl;
