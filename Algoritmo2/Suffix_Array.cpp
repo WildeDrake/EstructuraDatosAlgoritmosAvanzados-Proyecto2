@@ -15,7 +15,6 @@ bool comparacion(const Suffix* s1, const Suffix* s2) {
 }
 
 vector<unsigned int>* SuffixArray(string texto) {
-
     int n = texto.length(); 
 
     vector<Suffix*>* sufijos = new vector<Suffix*>();
@@ -76,6 +75,7 @@ int contarPatron(string &patron, string &texto, vector<unsigned int>* suffixArra
     
     return cont;
 }
+
 
 int main() {
     string texto = "banana";
