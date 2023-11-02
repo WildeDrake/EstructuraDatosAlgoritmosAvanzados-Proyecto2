@@ -10,52 +10,57 @@ struct Suffix {
     string sufijo;
 };
 
-bool comparacion(const Suffix &s1, const Suffix &s2) {
-    if(s1.sufijo < s2.sufijo) {
-        return true;
-    }
-    return false;
+bool comparacion(const Suffix* s1, const Suffix* s2) {
+    return s1->sufijo < s2->sufijo;
 }
 
-vector<int> SuffixArray(string texto) {
+vector<unsigned int>* SuffixArray(string texto) {
 
     int n = texto.length(); 
 
-    Suffix sufijos[n];
-    for (int i = 0 ; i < n ; i++) {
-        sufijos[i].indice = i;
-        sufijos[i].sufijo = texto.substr(i);
+    vector<Suffix*>* sufijos = new vector<Suffix*>();
+    for(int i = 0 ; i < n ; i++) {
+        Suffix* sufijo = new Suffix();
+        sufijo->indice = i;
+        sufijo->sufijo = texto.substr(i);
+        sufijos->push_back(sufijo);
     }
-    sort(sufijos, sufijos + n, comparacion);
+    sort(sufijos->begin(), sufijos->end(), &comparacion);
 
-    vector<int> suffixArray;
+    vector<unsigned int> *suffixArray = new vector<unsigned int>();
     for (int i = 0 ; i < n ; i++) {
-        suffixArray.push_back(sufijos[i].indice);
+        suffixArray->push_back((*sufijos)[i]->indice);
     }
+
+    while (sufijos->empty() == 0) {
+        delete sufijos->back();
+        sufijos->pop_back();
+    }
+    delete sufijos;
 
     return suffixArray;
 }
 
-int contarPatron(string &patron, string &texto, vector<int> &suffixArray) {
+int contarPatron(string &patron, string &texto, vector<unsigned int>* suffixArray) {
     int izq = 0;
     int der = texto.length() - 1;
     int cont = 0;
 
     while (izq <= der) {
         int mid = izq + (der - izq) / 2;
-        string sufijo = texto.substr(suffixArray[mid], patron.length());
+        string sufijo = texto.substr(suffixArray->at(mid), patron.length());
 
         if (sufijo == patron) { // Coincidencia lexicografica.
             cont++;
             // Buscar ocurrencias al lado izquierdo.
             int i = mid - 1;
-            while (i >= izq && texto.substr(suffixArray[i], patron.length()) == patron) {
+            while (i >= izq && texto.substr(suffixArray->at(i), patron.length()) == patron) {
                 cont++;
                 i--;
             }
             // Buscar ocurrencias al lado derecho.
             i = mid + 1;
-            while (i <= der && texto.substr(suffixArray[i], patron.length()) == patron) {
+            while (i <= der && texto.substr(suffixArray->at(i), patron.length()) == patron) {
                 cont++;
                 i++;
             }
@@ -75,11 +80,11 @@ int contarPatron(string &patron, string &texto, vector<int> &suffixArray) {
 int main() {
     string texto = "banana";
     string patron = "ana";
-    vector<int> suffixArray = SuffixArray(texto);
+    vector<unsigned int>* suffixArray = SuffixArray(texto);
 
     cout << "SuffixArray para '" << texto << "':" << endl;
-    for (int i = 0 ; i < suffixArray.size() ; i++) {
-        cout << suffixArray[i] << " ";
+    for (int i = 0 ; i < suffixArray->size() ; i++) {
+        cout << suffixArray->at(i) << " ";
     }
     cout << endl;
 
