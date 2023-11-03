@@ -1,21 +1,42 @@
-#include <iostream>
+#include "Suffix_Array.h"
+
 #include <fstream>
 #include <sstream>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
-int main() {
-    ifstream archivo("../dna.100MB.txt");
+
+string* LecturaArchivo(const string &directorio) {
+    ifstream archivo(directorio);
     if (!archivo.is_open()) {
-        cerr << "Error al abrir el archivo." << endl;
-        return 1;
+        throw runtime_error("Error al abrir el archivo.");
     }
     stringstream buffer;
     buffer << archivo.rdbuf();
     archivo.close();
-    string texto = buffer.str();
+    return new string(buffer.str());
+}
 
-    cout << texto << endl;
 
+int main() {
+
+    string* texto;
+    try {
+        texto = LecturaArchivo("../../dna.100MB.txt");
+    } catch (const exception& e) {
+        cerr << e.what() << endl;
+        return 1; 
+    }
+
+    string patron = "AACC";
+    vector<unsigned int>* suffixArray = SuffixArray(texto);
+
+
+
+
+
+    delete texto;
     return 0;
 }
