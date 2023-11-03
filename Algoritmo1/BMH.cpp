@@ -7,7 +7,7 @@ BMH::BMH(){
 }
 
 
-void BMH::createPT(string &pattern){
+void BMH::createPT(string pattern){
     PTBad = new int[256];
     int default_value = pattern.length();
     // Llenar tabla de chars size = pattern.length()
@@ -24,7 +24,7 @@ void BMH::createPT(string &pattern){
 }
 
 
-int BMH::count(string *text, string &pattern){
+int BMH::count(string *text, string pattern){
     //createPT(pattern);                // Crea la Pattern Table
     int textp = pattern.length() - 1;   // Indice de donde se esta analizando en el txt, en BHM siempre se empieza primero
                                         // con la ultima letra del patron, por lo que se empieza desde length() - 1
@@ -49,7 +49,7 @@ int BMH::count(string *text, string &pattern){
 }
 
 
-bool BMH::search(string *text, int t, string &pattern, int count) {
+bool BMH::search(string *text, int t, string pattern, int count) {
     if (text->at(t) == pattern[pattern.length() - count - 1]) {
         return true;
     } else {

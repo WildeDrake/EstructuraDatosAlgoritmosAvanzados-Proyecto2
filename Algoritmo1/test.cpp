@@ -1,4 +1,4 @@
-#include "BMH.cpp"
+#include "BMH.h"
 
 #include <fstream>
 #include <sstream>
