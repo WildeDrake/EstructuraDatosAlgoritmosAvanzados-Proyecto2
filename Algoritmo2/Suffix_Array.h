@@ -2,43 +2,23 @@
 #include <cstring>
 #include <algorithm>
 #include <vector>
+#include <string_view>
 
 using namespace std;
 
 
-struct Suffix {
-    int indice;
-    string sufijo;
-};
-
-
-bool comparacion(const Suffix* s1, const Suffix* s2) {
-    return s1->sufijo < s2->sufijo;
-}
-
-
 vector<unsigned int>* SuffixArray(string* &texto) {
-    int n = texto->length(); 
-
-    vector<Suffix*>* sufijos = new vector<Suffix*>();
-    for(int i = 0 ; i < n ; i++) {
-        Suffix* sufijo = new Suffix();
-        sufijo->indice = i;
-        sufijo->sufijo = texto->substr(i);
-        sufijos->push_back(sufijo);
-    }
-    sort(sufijos->begin(), sufijos->end(), &comparacion);
-
+    int n = texto->length();
+    string_view substring = string_view(*texto);
     vector<unsigned int> *suffixArray = new vector<unsigned int>();
-    for (int i = 0 ; i < n ; i++) {
-        suffixArray->push_back((*sufijos)[i]->indice);
+
+    for(int i = 0 ; i < n ; i++) {
+        suffixArray->push_back(i);
     }
 
-    while (sufijos->empty() == 0) {
-        delete sufijos->back();
-        sufijos->pop_back();
-    }
-    delete sufijos;
+    sort(suffixArray->begin(), suffixArray->end(), [substring](unsigned l, unsigned r) -> bool {
+        return substring.substr(l) < substring.substr(r);
+    });
 
     return suffixArray;
 }

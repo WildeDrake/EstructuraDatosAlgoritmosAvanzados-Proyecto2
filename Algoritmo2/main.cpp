@@ -2,10 +2,10 @@
 
 int main() {
     string* texto = new string("banana");
-    string patron = "ana";
+    string patron = "a";
     vector<unsigned int>* suffixArray = SuffixArray(texto);
 
-    cout << "SuffixArray para '" << texto << "':" << endl;
+    cout << "SuffixArray para '" << *texto << "':" << endl;
     for (int i = 0 ; i < suffixArray->size() ; i++) {
         cout << suffixArray->at(i) << " ";
     }
