@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
 
     vector<tiempos> resultados;
     for(int i = 0 ; i < 30 ; ++i){
-        resultados.push_back(Test(texto, "AACCT"));
+        resultados.push_back(Test(texto, "AACCTA"));
         promPre += resultados.at(i).PreComputo;
         promCont += resultados.at(i).ContPatron;
         promTot += resultados.at(i).SumTotal;
@@ -73,17 +73,17 @@ int main(int argc, char* argv[]) {
     promPre = promPre / 30;
     promCont = promCont / 30;
     promTot = promTot / 30;
-    
+
     for(int i = 0 ; i < 30 ; ++i){
         varPre += (static_cast<double>(resultados.at(i).PreComputo) - promPre) * (static_cast<double>(resultados.at(i).PreComputo) - promPre);
         varCont += (static_cast<double>(resultados.at(i).ContPatron) - promCont) * (static_cast<double>(resultados.at(i).ContPatron) - promCont);
         varTot += (static_cast<double>(resultados.at(i).SumTotal) - promTot) * (static_cast<double>(resultados.at(i).SumTotal) - promTot);
     }
-    varPre = varPre/30;
-    varCont = varCont/30;
-    varTot = varTot/30;
+    varPre = varPre / 30;
+    varCont = varCont / 30;
+    varTot = varTot / 30;
     
-    cout << promPre << ";" << promCont << ";" << promTot << ";" << varPre << ";" << varCont << ";" << varTot << endl;
+    cout << tamStr << ";" << promPre << ";" << promCont << ";" << promTot << ";" << varPre << ";" << varCont << ";" << varTot << endl;
 
     delete texto;
     return 0;
