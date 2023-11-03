@@ -57,31 +57,29 @@ int main() {
         return 1; 
     }
 
+    unsigned int PreCompTotal = 0, ContPatrTotal = 0,  sumaTotal = 0, PreCompCuadrados = 0, ContPatrCuadrados = 0, TotalCuadrados = 0;
+
     vector<tiempos> resultados;
     for(int i = 0 ; i < 30 ; ++i){
         resultados.push_back(Test(texto, "AACCT"));
+
+        cout << resultados.at(i).PreComputo << ";" << resultados.at(i).ContPatron << ";" << resultados.at(i).SumTotal << ";" << resultados.at(i).size << "\n";
+
+        PreCompTotal += resultados.at(i).PreComputo;
+        ContPatrTotal += resultados.at(i).ContPatron;
+        sumaTotal += resultados.at(i).SumTotal;
+        PreCompCuadrados += resultados.at(i).PreComputo * resultados.at(i).PreComputo;
+        ContPatrCuadrados += resultados.at(i).ContPatron * resultados.at(i).ContPatron;
+        TotalCuadrados += resultados.at(i).SumTotal * resultados.at(i).SumTotal;
     }
 
-    unsigned int PreCompTotal = 0, PreCompCuadrados = 0, ContPatrTotal = 0, ContPatrCuadrados = 0, sumaTotal = 0, TotalCuadrados = 0;
-    for (const auto& tiempo : resultados) {
-        PreCompTotal += tiempo.PreComputo;
-        PreCompCuadrados += tiempo.PreComputo * tiempo.PreComputo;
-        ContPatrTotal += tiempo.ContPatron;
-        ContPatrCuadrados += tiempo.ContPatron * tiempo.ContPatron;
-        sumaTotal += tiempo.SumTotal;
-        TotalCuadrados += tiempo.SumTotal * tiempo.SumTotal;
-    }
     double promPre = static_cast<double>(PreCompTotal) / resultados.size();
     double promCont = static_cast<double>(ContPatrTotal) / resultados.size();
     double promTot = static_cast<double>(sumaTotal) / resultados.size();
     double varPre = static_cast<double>(PreCompCuadrados) / resultados.size() - promPre * promPre;
     double varCont = static_cast<double>(ContPatrCuadrados) / resultados.size() - promCont * promCont;
     double varTot = static_cast<double>(TotalCuadrados) / resultados.size() - promTot * promTot;
-
-    cout << "Tiempo PreComputo;Tiempo Contar Patron Repetido;Tiempo Total;Tamaño" << "\n";
-    for(int i = 0 ; i < 30 ; ++i){
-        cout << resultados.at(i).PreComputo << ";" << resultados.at(i).ContPatron << ";" << resultados.at(i).SumTotal << ";" << resultados.at(i).size << "\n";
-    }
+    
     cout << "Promedio;Promedio;Promedio" << "\n";
     cout << promPre << ";" << promCont << ";" << promTot << "\n";
     cout << "Varianza;Varianza;Varianza" << "\n";
