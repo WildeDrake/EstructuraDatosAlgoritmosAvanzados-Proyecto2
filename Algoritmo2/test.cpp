@@ -3,12 +3,12 @@
 #include <fstream>
 #include <sstream>
 #include <chrono>
+#include <iomanip>
 
-using namespace std;
 using namespace std::chrono;
 
 
-string* LecturaArchivo(const string &directorio) {
+string* LecturaArchivo(const string &directorio, int tamStr) {
     ifstream archivo(directorio);
     if (!archivo.is_open()) {
         throw runtime_error("Error al abrir el archivo.");
@@ -16,12 +16,12 @@ string* LecturaArchivo(const string &directorio) {
     stringstream buffer;
     buffer << archivo.rdbuf();
     archivo.close();
-    return new string(buffer.str());
+    return new string(buffer.str().substr(0, tamStr));
 }
 
 
 struct tiempos {
-    unsigned int PreComputo, ContPatron, SumTotal, size;
+    unsigned int PreComputo, ContPatron, SumTotal;
 };
 
 tiempos Test(string* &texto, string patron) {
@@ -30,59 +30,59 @@ tiempos Test(string* &texto, string patron) {
     auto start = high_resolution_clock::now();
     vector<unsigned int>* suffixArray = SuffixArray(texto);
     auto end = high_resolution_clock::now();
-    resultados.PreComputo =  duration_cast<microseconds>(end - start).count();
+    resultados.PreComputo =  duration_cast<milliseconds>(end - start).count();
 
     start = high_resolution_clock::now();
     contarPatron(patron, texto, suffixArray);
     end = high_resolution_clock::now();
-    resultados.ContPatron =  duration_cast<microseconds>(end - start).count();
+    resultados.ContPatron =  duration_cast<milliseconds>(end - start).count();
 
     resultados.SumTotal = resultados.ContPatron + resultados.PreComputo;
-    resultados.size = sizeof(suffixArray);
 
     delete suffixArray;
     return resultados;
 } 
 
 
-int main() {
+int main(int argc, char* argv[]) {
 
+    if(argc != 2) {
+        cout << "Uso: " << argv[0] << " n" << endl;
+        return 1;
+    }
+    int tamStr = atoi(argv[1]);
+    
     string* texto;
     try {
-        texto = LecturaArchivo("../dna.50MB.txt"); // Alternativamente "../../dna.100MB.txt"
+        texto = LecturaArchivo("../dna.50MB.txt", tamStr); // Alternativamente "../../dna.100MB.txt"
     } catch (const exception& e) {
         cerr << e.what() << endl;
         return 1; 
     }
-    cout << "Tiempo PreComputo;Tiempo Contar Patron Repetido;Tiempo Total;Tamaño" << "\n";
-    vector<tiempos> resultados;
 
-    unsigned int PreCompTotal = 0, ContPatrTotal = 0,  sumaTotal = 0, PreCompCuadrados = 0, ContPatrCuadrados = 0, TotalCuadrados = 0;
+    double promPre = 0, promCont = 0, promTot = 0, varPre = 0, varCont = 0, varTot = 0;
+    vector<tiempos> resultados;
+    for(int i = 0 ; i < 30 ; ++i){
+        resultados.push_back(Test(texto, "AACCTA"));
+        promPre += resultados.at(i).PreComputo;
+        promCont += resultados.at(i).ContPatron;
+        promTot += resultados.at(i).SumTotal;
+    }
+    promPre = promPre / 30;
+    promCont = promCont / 30;
+    promTot = promTot / 30;
 
     for(int i = 0 ; i < 30 ; ++i){
-        resultados.push_back(Test(texto, "AACCT"));
-        
-        cout << resultados.at(i).PreComputo << ";" << resultados.at(i).ContPatron << ";" << resultados.at(i).SumTotal << ";" << resultados.at(i).size << "\n";
-
-        PreCompTotal += resultados.at(i).PreComputo;
-        ContPatrTotal += resultados.at(i).ContPatron;
-        sumaTotal += resultados.at(i).SumTotal;
-        PreCompCuadrados += resultados.at(i).PreComputo * resultados.at(i).PreComputo;
-        ContPatrCuadrados += resultados.at(i).ContPatron * resultados.at(i).ContPatron;
-        TotalCuadrados += resultados.at(i).SumTotal * resultados.at(i).SumTotal;
+        varPre += (static_cast<double>(resultados.at(i).PreComputo) - promPre) * (static_cast<double>(resultados.at(i).PreComputo) - promPre);
+        varCont += (static_cast<double>(resultados.at(i).ContPatron) - promCont) * (static_cast<double>(resultados.at(i).ContPatron) - promCont);
+        varTot += (static_cast<double>(resultados.at(i).SumTotal) - promTot) * (static_cast<double>(resultados.at(i).SumTotal) - promTot);
     }
-
-    double promPre = static_cast<double>(PreCompTotal) / resultados.size();
-    double promCont = static_cast<double>(ContPatrTotal) / resultados.size();
-    double promTot = static_cast<double>(sumaTotal) / resultados.size();
-    double varPre = static_cast<double>(PreCompCuadrados) / resultados.size() - promPre * promPre;
-    double varCont = static_cast<double>(ContPatrCuadrados) / resultados.size() - promCont * promCont;
-    double varTot = static_cast<double>(TotalCuadrados) / resultados.size() - promTot * promTot;
-
-    cout << "Promedio;Promedio;Promedio" << "\n";
-    cout << promPre << ";" << promCont << ";" << promTot << "\n";
-    cout << "Varianza;Varianza;Varianza" << "\n";
-    cout << varPre << ";" << varCont << ";" << varTot << "\n";
+    varPre = varPre / 30;
+    varCont = varCont / 30;
+    varTot = varTot / 30;
+    
+    cout << tamStr << ";" << fixed << setprecision(0) << promPre << ";" << fixed << setprecision(0) << promCont << ";" << fixed << setprecision(0) 
+    << promTot << ";" << fixed << setprecision(0) << varPre << ";" << fixed << setprecision(0) << varCont << ";" << fixed << setprecision(0) << varTot << endl;
 
     delete texto;
     return 0;

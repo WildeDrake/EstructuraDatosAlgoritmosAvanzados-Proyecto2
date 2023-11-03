@@ -4,6 +4,7 @@
 #include <sstream>
 #include <chrono>
 #include <vector>
+#include <iomanip>
 
 using namespace std::chrono;
 
@@ -31,12 +32,12 @@ tiempos Test(string* &texto, string patron) {
     auto start = high_resolution_clock::now();
     bmh.createPT(patron);
     auto end = high_resolution_clock::now();
-    resultados.PreComputo =  duration_cast<microseconds>(end - start).count();
+    resultados.PreComputo =  duration_cast<milliseconds>(end - start).count();
 
     start = high_resolution_clock::now();
     bmh.count(texto, patron);
     end = high_resolution_clock::now();
-    resultados.ContPatron =  duration_cast<microseconds>(end - start).count();
+    resultados.ContPatron =  duration_cast<milliseconds>(end - start).count();
 
     resultados.SumTotal = resultados.ContPatron + resultados.PreComputo;
 
@@ -62,7 +63,6 @@ int main(int argc, char* argv[]) {
     }
 
     double promPre = 0, promCont = 0, promTot = 0, varPre = 0, varCont = 0, varTot = 0;
-
     vector<tiempos> resultados;
     for(int i = 0 ; i < 30 ; ++i){
         resultados.push_back(Test(texto, "AACCTA"));
@@ -83,7 +83,8 @@ int main(int argc, char* argv[]) {
     varCont = varCont / 30;
     varTot = varTot / 30;
     
-    cout << tamStr << ";" << promPre << ";" << promCont << ";" << promTot << ";" << varPre << ";" << varCont << ";" << varTot << endl;
+    cout << tamStr << ";" << fixed << setprecision(0) << promPre << ";" << fixed << setprecision(0) << promCont << ";" << fixed << setprecision(0) 
+    << promTot << ";" << fixed << setprecision(0) << varPre << ";" << fixed << setprecision(0) << varCont << ";" << fixed << setprecision(0) << varTot << endl;
 
     delete texto;
     return 0;
