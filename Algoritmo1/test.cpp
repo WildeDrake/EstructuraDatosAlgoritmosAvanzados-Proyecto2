@@ -61,25 +61,23 @@ int main(int argc, char* argv[]) {
         return 1; 
     }
 
-    unsigned int PreCompTotal = 0, ContPatrTotal = 0,  sumaTotal = 0;
+    double promPre = 0, promCont = 0, promTot = 0, varPre = 0, varCont = 0, varTot = 0;
 
     vector<tiempos> resultados;
     for(int i = 0 ; i < 30 ; ++i){
         resultados.push_back(Test(texto, "AACCT"));
-        PreCompTotal += resultados.at(i).PreComputo;
-        ContPatrTotal += resultados.at(i).ContPatron;
-        sumaTotal += resultados.at(i).SumTotal;
+        promPre += resultados.at(i).PreComputo;
+        promCont += resultados.at(i).ContPatron;
+        promTot += resultados.at(i).SumTotal;
     }
-
-    double promPre = static_cast<double>(PreCompTotal) / 30;
-    double promCont = static_cast<double>(ContPatrTotal) / 30;
-    double promTot = static_cast<double>(sumaTotal) / 30;
-
-    double varPre = 0, varCont = 0, varTot = 0;
+    promPre = promPre / 30;
+    promCont = promCont / 30;
+    promTot = promTot / 30;
+    
     for(int i = 0 ; i < 30 ; ++i){
         varPre += (static_cast<double>(resultados.at(i).PreComputo) - promPre) * (static_cast<double>(resultados.at(i).PreComputo) - promPre);
         varCont += (static_cast<double>(resultados.at(i).ContPatron) - promCont) * (static_cast<double>(resultados.at(i).ContPatron) - promCont);
-        varTot += (static_cast<double>(resultados.at(i).SumTotal) - sumaTotal) * (static_cast<double>(resultados.at(i).SumTotal) - sumaTotal);
+        varTot += (static_cast<double>(resultados.at(i).SumTotal) - promTot) * (static_cast<double>(resultados.at(i).SumTotal) - promTot);
     }
     varPre = varPre/30;
     varCont = varCont/30;
