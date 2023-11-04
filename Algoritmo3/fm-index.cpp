@@ -23,7 +23,8 @@ public:
     // bool constructIndex(const string& file) {
     bool constructIndex() {
         // string index_file = file + index_suffix;
-        string index_file = "dna.50MB.txt";
+        string index_file = "dna.50MB.txt.fm9";
+        string file = "dna.50MB.txt";
         if (load_from_file(fm_index, index_file)) {
             return true;
         }
