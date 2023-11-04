@@ -20,8 +20,10 @@ public:
     FMIndexSearch(size_t max_loc=5, size_t post_ctx=10, size_t pre_ctx=10)
         : max_locations(max_loc), post_context(post_ctx), pre_context(pre_ctx) {}
 
-    bool constructIndex(const string& file) {
-        string index_file = file + index_suffix;
+    // bool constructIndex(const string& file) {
+    bool constructIndex() {
+        // string index_file = file + index_suffix;
+        string index_file = "dna.50MB.txt";
         if (load_from_file(fm_index, index_file)) {
             return true;
         }
@@ -51,7 +53,7 @@ public:
         cout << endl;
     }
 
-    unsigned long long test(const string &query) {
+    unsigned long long test(string query) {
         auto start_time = std::chrono::high_resolution_clock::now();
 
         size_t occs = sdsl::count(fm_index, query.begin(), query.end());
@@ -97,21 +99,26 @@ public:
 };
 
 int main(int argc, char** argv) {
-    if (argc < 2) {
-        cout << "Usage " << argv[0] << " text_file [max_locations] [post_context] [pre_context]" << endl;
-        return 1;
-    }
+    // if (argc < 2) {
+    //     cout << "Usage " << argv[0] << " text_file [max_locations] [post_context] [pre_context]" << endl;
+    //     return 1;
+    // }
 
     size_t max_locations = 5;
     size_t post_context = 10;
     size_t pre_context = 10;
-    if (argc >= 3) max_locations = atoi(argv[2]);
-    if (argc >= 4) post_context = atoi(argv[3]);
-    if (argc >= 5) pre_context = atoi(argv[4]);
+    // if (argc >= 3) max_locations = atoi(argv[2]);
+    // if (argc >= 4) post_context = atoi(argv[3]);
+    // if (argc >= 5) pre_context = atoi(argv[4]);
 
     FMIndexSearch fmSearch(max_locations, post_context, pre_context);
-    if (fmSearch.constructIndex(argv[1])) {
-        fmSearch.search();
+    if (fmSearch.constructIndex()) {
+        // FM-index inicializado,
+        // Diego acá pon el código de testeo
+        // ejemplo: tiempo = fmSearch.test("ASCACSSDA");
+    }
+    else {
+        cout << "Ha ocurrido un error en la inicialización del FM-index\n";
     }
 
     return 0;
