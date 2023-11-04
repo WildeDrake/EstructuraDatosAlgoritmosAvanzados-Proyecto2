@@ -40,7 +40,7 @@ int BMH::count(string *text, string pattern){
                 textp = textp - 1;
                 ++count_coincidencia;
             } else {
-                textp = textp + PTBad[(int) text->at(textp)];
+                textp = textp + PTBad[(int) text->at(textp)] + count_coincidencia;
                 count_coincidencia = 0;
             }
         }
