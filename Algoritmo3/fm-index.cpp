@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <iomanip>
+#include <chrono>
 
 using namespace sdsl;
 using namespace std;
@@ -48,6 +49,18 @@ public:
             cout << prompt;
         }
         cout << endl;
+    }
+
+    unsigned long long test(const string &query) {
+        auto start_time = std::chrono::high_resolution_clock::now();
+
+        size_t occs = sdsl::count(fm_index, query.begin(), query.end());
+
+        auto end_time = std::chrono::high_resolution_clock::now();
+
+        unsigned int ans = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+
+        return ans;
     }
 
     void displayOccurrences(const string& query) {
