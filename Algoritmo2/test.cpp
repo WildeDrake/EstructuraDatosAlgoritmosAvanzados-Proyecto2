@@ -30,12 +30,12 @@ tiempos Test(string* &texto, string patron) {
     auto start = high_resolution_clock::now();
     vector<unsigned int>* suffixArray = SuffixArray(texto);
     auto end = high_resolution_clock::now();
-    resultados.PreComputo =  duration_cast<milliseconds>(end - start).count();
+    resultados.PreComputo =  duration_cast<microseconds>(end - start).count();
 
     start = high_resolution_clock::now();
     contarPatron(patron, texto, suffixArray);
     end = high_resolution_clock::now();
-    resultados.ContPatron =  duration_cast<milliseconds>(end - start).count();
+    resultados.ContPatron =  duration_cast<microseconds>(end - start).count();
 
     resultados.SumTotal = resultados.ContPatron + resultados.PreComputo;
 
