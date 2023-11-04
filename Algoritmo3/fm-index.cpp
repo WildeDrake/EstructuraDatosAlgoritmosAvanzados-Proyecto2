@@ -7,16 +7,18 @@
 
 using namespace sdsl;
 using namespace std;
+using namespace std::chrono;
 
 class FMIndexSearch {
 private:
     string index_suffix = ".fm9";
-    csa_wt<wt_huff<rrr_vector<127> >, 512, 1024> fm_index;
     size_t max_locations;
     size_t post_context;
     size_t pre_context;
 
 public:
+    csa_wt<wt_huff<rrr_vector<127> >, 512, 1024> fm_index;
+
     FMIndexSearch(size_t max_loc=5, size_t post_ctx=10, size_t pre_ctx=10)
         : max_locations(max_loc), post_context(post_ctx), pre_context(pre_ctx) {}
 
@@ -54,18 +56,6 @@ public:
         cout << endl;
     }
 
-    unsigned long long test(string query) {
-        auto start_time = std::chrono::high_resolution_clock::now();
-
-        size_t occs = sdsl::count(fm_index, query.begin(), query.end());
-
-        auto end_time = std::chrono::high_resolution_clock::now();
-
-        unsigned int ans = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
-
-        return ans;
-    }
-
     void displayOccurrences(const string& query) {
         size_t m = query.size();
         size_t occs = sdsl::count(fm_index, query.begin(), query.end());
@@ -99,29 +89,78 @@ public:
     }
 };
 
-int main(int argc, char** argv) {
-    // if (argc < 2) {
-    //     cout << "Usage " << argv[0] << " text_file [max_locations] [post_context] [pre_context]" << endl;
-    //     return 1;
-    // }
 
+struct tiempos {
+    unsigned int PreComputo, ContPatron, SumTotal;
+};
+
+tiempos Test(string* &texto, string patron) {
     size_t max_locations = 5;
     size_t post_context = 10;
     size_t pre_context = 10;
-    // if (argc >= 3) max_locations = atoi(argv[2]);
-    // if (argc >= 4) post_context = atoi(argv[3]);
-    // if (argc >= 5) pre_context = atoi(argv[4]);
 
+    tiempos resultados;
+    auto start = high_resolution_clock::now();
     FMIndexSearch fmSearch(max_locations, post_context, pre_context);
-    if (fmSearch.constructIndex()) {
-        // FM-index inicializado,
-        // Diego acá pon el código de testeo
-        // ejemplo: tiempo = fmSearch.test("ASCACSSDA");
-    }
-    else {
+    if (!fmSearch.constructIndex()) {
         cout << "Ha ocurrido un error en la inicialización del FM-index\n";
     }
+    auto end = high_resolution_clock::now();
 
+    resultados.PreComputo =  duration_cast<microseconds>(end - start).count();
+
+    start = high_resolution_clock::now();
+    size_t occs = sdsl::count(fmSearch.fm_index, patron.begin(), patron.end());
+    end = high_resolution_clock::now();
+    resultados.ContPatron =  duration_cast<microseconds>(end - start).count();
+
+    resultados.SumTotal = resultados.ContPatron + resultados.PreComputo;
+
+    return resultados;
+} 
+
+
+int main(int argc, char* argv[]) {
+
+    if(argc != 2) {
+        cout << "Uso: " << argv[0] << " n" << endl;
+        return 1;
+    }
+    int tamStr = atoi(argv[1]);
+    
+    string* texto;
+    try {
+        texto = LecturaArchivo("../dna.50MB.txt", tamStr); // Alternativamente "../../dna.100MB.txt"
+    } catch (const exception& e) {
+        cerr << e.what() << endl;
+        return 1; 
+    }
+
+    double promPre = 0, promCont = 0, promTot = 0, varPre = 0, varCont = 0, varTot = 0;
+    vector<tiempos> resultados;
+    for(int i = 0 ; i < 30 ; ++i){
+        resultados.push_back(Test(texto, "AACCTA"));
+        promPre += resultados.at(i).PreComputo;
+        promCont += resultados.at(i).ContPatron;
+        promTot += resultados.at(i).SumTotal;
+    }
+    promPre = promPre / 30;
+    promCont = promCont / 30;
+    promTot = promTot / 30;
+
+    for(int i = 0 ; i < 30 ; ++i){
+        varPre += (static_cast<double>(resultados.at(i).PreComputo) - promPre) * (static_cast<double>(resultados.at(i).PreComputo) - promPre);
+        varCont += (static_cast<double>(resultados.at(i).ContPatron) - promCont) * (static_cast<double>(resultados.at(i).ContPatron) - promCont);
+        varTot += (static_cast<double>(resultados.at(i).SumTotal) - promTot) * (static_cast<double>(resultados.at(i).SumTotal) - promTot);
+    }
+    varPre = varPre / 30;
+    varCont = varCont / 30;
+    varTot = varTot / 30;
+    
+    cout << tamStr << ";" << fixed << setprecision(0) << promPre << ";" << fixed << setprecision(0) << promCont << ";" << fixed << setprecision(0) 
+    << promTot << ";" << fixed << setprecision(0) << varPre << ";" << fixed << setprecision(0) << varCont << ";" << fixed << setprecision(0) << varTot << endl;
+
+    delete texto;
     return 0;
 }
 

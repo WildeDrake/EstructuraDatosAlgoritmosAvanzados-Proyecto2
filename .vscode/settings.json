@@ -6,6 +6,8 @@
         "chrono": "cpp",
         "stdexcept": "cpp",
         "charconv": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "vector": "cpp",
+        "algorithm": "cpp"
     }
 }

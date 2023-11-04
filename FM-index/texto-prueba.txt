@@ -1,2 +1,0 @@
-Este es un texto de prueba. Los textos son un conjunto de enunciados que componen un documento escrito.
-¿Cuántas veces habré escrito la palabra texto en mi vida?. En fin, prueba a buscar la palabra "texto" con el fm-index.
