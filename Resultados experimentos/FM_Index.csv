@@ -1,0 +1,11 @@
+Tamaño del Texto;Tiempo Precomputación (microsegundos);Tiempo Contar Patrón (microsegundos);Tiempo Total (microsegundos);Varianza Precomputación (microsegundos);Variaza  Contar Patrón (microsegundos);Varianza Total (microsegundos)
+1000;0;71;0;0;127;200
+2000;0;69;0;0;128;200
+3000;0;70;0;0;111;240
+4000;0;70;0;0;140;230
+5000;0;71;0;0;126;202
+6000;0;72;0;0;127;201
+7000;0;78;0;0;128;221
+8000;0;71;0;0;120;199
+9000;0;70;0;0;127;204
+10000;0;75;0;0;125;198
